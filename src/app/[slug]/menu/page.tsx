@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 
 import { db } from "@/lib/prisma";
 
+import RestaurantCategories from "./components/categories";
 import RestaurantHero from "./components/hero";
 
 interface RestaurantMenuPageProps {
@@ -23,7 +24,15 @@ const RestaurantMenuPage = async ({
 }: RestaurantMenuPageProps) => {
   const { slug } = await params;
   const { consumptionMethod } = await searchParams;
-  const restaurant = await db.restaurant.findUnique({ where: { slug } });
+
+  const restaurant = await db.restaurant.findUnique({
+    where: { slug },
+    include: {
+      menuCategories: {
+        include: { products: true },
+      },
+    },
+  });
 
   if (!isConsumptionMethodValid(consumptionMethod)) {
     return notFound();
@@ -34,8 +43,9 @@ const RestaurantMenuPage = async ({
   }
 
   return (
-    <div>
+    <div className="mx-auto">
       <RestaurantHero restaurant={restaurant} />
+      <RestaurantCategories restaurant={restaurant} />
     </div>
   );
 };
