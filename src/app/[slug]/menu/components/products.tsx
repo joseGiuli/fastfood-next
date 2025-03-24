@@ -3,18 +3,21 @@
 import { Product } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 
 interface ProductsProps {
   products: Product[];
 }
 
 const MenuCategoryProducts = ({ products }: ProductsProps) => {
+  const { slug } = useParams();
+
   return (
     <div className="py-4">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {products.map((product) => (
           <Link
-            href="/"
+            href={`/${slug}/menu/${product.id}`}
             key={product.id}
             className="mx-2 flex items-center justify-between gap-6 rounded-lg border p-4 shadow-sm transition-shadow hover:shadow-md"
           >
