@@ -10,7 +10,7 @@ interface ProductHeroProps {
   products: { imageUrl: string; name: string };
 }
 
-const ProductsHero = ({ products }: ProductHeroProps) => {
+const ProductHero = ({ products }: ProductHeroProps) => {
   const router = useRouter();
 
   const handleBackClick = () => {
@@ -18,7 +18,7 @@ const ProductsHero = ({ products }: ProductHeroProps) => {
   };
 
   return (
-    <div className="relative h-[300px] w-full">
+    <div className="relative min-h-[300px] w-full">
       <Button
         variant="secondary"
         onClick={handleBackClick}
@@ -46,4 +46,4 @@ const ProductsHero = ({ products }: ProductHeroProps) => {
   );
 };
 
-export default ProductsHero;
+export default ProductHero;

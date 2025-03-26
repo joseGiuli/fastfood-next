@@ -1,0 +1,104 @@
+"use client";
+
+import { Prisma } from "@prisma/client";
+import { ChefHatIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
+
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import FormatCurrency from "@/helpers/format-currency";
+
+interface ProductDetailsProps {
+  product: Prisma.ProductGetPayload<{
+    include: {
+      restaurant: {
+        select: { name: true; avatarImageUrl: true };
+      };
+    };
+  }>;
+}
+
+const ProductDetails = ({ product }: ProductDetailsProps) => {
+  const [quantity, setQuantity] = useState<number>(0);
+
+  const handleIncreaseClick = () => {
+    setQuantity(quantity + 1);
+  };
+
+  const handleDecreaseClick = () => {
+    if (quantity > 0) {
+      setQuantity(quantity - 1);
+    }
+  };
+
+  return (
+    <div className="relative z-50 mt-[-1.5rem] flex flex-auto flex-col overflow-hidden rounded-t-3xl p-5">
+      <div className="flex-auto overflow-hidden">
+        <div className="flex items-center gap-1.5 border-t border-gray-200 pt-4">
+          <Image
+            src={product.restaurant.avatarImageUrl}
+            alt={product.restaurant.name}
+            width={16}
+            height={16}
+            className="rounded-full"
+          />
+          <p className="text-xs text-muted-foreground">
+            {product.restaurant.name}
+          </p>
+        </div>
+        <h2 className="mb-4 mt-1 text-xl font-semibold">{product.name}</h2>
+
+        <div className="flex items-center justify-between border-b border-gray-200 pb-4">
+          <h3 className="text-xl font-semibold">
+            <FormatCurrency value={product.price} />
+          </h3>
+          <div className="flex items-center gap-3 text-center">
+            <Button
+              variant="outline"
+              className="h-8 w-8 rounded-xl"
+              onClick={handleDecreaseClick}
+            >
+              <ChevronLeftIcon />
+            </Button>
+            <p>{quantity}</p>
+            <Button
+              variant="destructive"
+              className="h-8 w-8 rounded-xl"
+              onClick={handleIncreaseClick}
+            >
+              <ChevronRightIcon />
+            </Button>
+          </div>
+        </div>
+        <ScrollArea className="h-full">
+          <div className="mt-6">
+            <h4 className="mb-4 font-semibold">Sobre</h4>
+            <p className="text-sm text-muted-foreground">
+              {product.description}
+            </p>
+          </div>
+
+          <div className="mt-6 space-y-3">
+            <div className="5 flex items-center gap-1">
+              <ChefHatIcon size={18} />
+              <h4 className="font-semibold">Ingredientes</h4>
+            </div>
+            <ul className="list-disc space-y-2 px-4 text-sm text-muted-foreground">
+              {product.ingredients.map((ingredient) => (
+                <li key={ingredient} className="">
+                  {ingredient}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </ScrollArea>
+      </div>
+      <Button className="mt-6 w-full rounded-full"> Adicionar à sacola</Button>
+    </div>
+  );
+
+  //   PAREI EM 33:00
+};
+
+export default ProductDetails;
