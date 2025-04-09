@@ -116,3 +116,5 @@ const ProductDetails = ({ product }: ProductDetailsProps) => {
 };
 
 export default ProductDetails;
+
+// 41:20

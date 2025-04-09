@@ -13,6 +13,10 @@ export interface ICartContext {
   products: CartProduct[];
   toggleCart: () => void;
   addProduct: (product: CartProduct) => void;
+  decreaseProductQuantity: (productId: string) => void;
+  increaseProductQuantity: (productId: string) => void;
+  removeProduct: (productId: string) => void;
+  orderTotal: number;
 }
 
 export const CartContext = createContext<ICartContext>({
@@ -20,6 +24,10 @@ export const CartContext = createContext<ICartContext>({
   products: [],
   toggleCart: () => {},
   addProduct: () => {},
+  decreaseProductQuantity: () => {},
+  increaseProductQuantity: () => {},
+  removeProduct: () => {},
+  orderTotal: 0,
 });
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
@@ -51,6 +59,38 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  const decreaseProductQuantity = (productId: string) => {
+    setProducts((prevProducts) => {
+      return prevProducts.map((prevProduct) => {
+        if (productId === prevProduct.id && prevProduct.quantity > 1) {
+          return { ...prevProduct, quantity: prevProduct.quantity - 1 };
+        }
+        return prevProduct;
+      });
+    });
+  };
+
+  const increaseProductQuantity = (productId: string) => {
+    setProducts((prevProducts) => {
+      return prevProducts.map((prevProduct) => {
+        if (productId === prevProduct.id) {
+          return { ...prevProduct, quantity: prevProduct.quantity + 1 };
+        }
+        return prevProduct;
+      });
+    });
+  };
+
+  const removeProduct = (productId: string) => {
+    setProducts((prevProducts) =>
+      prevProducts.filter((prevProduct) => prevProduct.id !== productId),
+    );
+  };
+
+  const orderTotal = products.reduce((acc, product) => {
+    return acc + product.price * product.quantity;
+  }, 0);
+
   const toggleCart = () => {
     setIsOpen((prev) => !prev);
   };
@@ -60,8 +100,12 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       value={{
         isOpen,
         products,
+        orderTotal,
         toggleCart,
         addProduct,
+        decreaseProductQuantity,
+        increaseProductQuantity,
+        removeProduct,
       }}
     >
       {children}
