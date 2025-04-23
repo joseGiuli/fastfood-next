@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import {PatternFormat} from "react-number-format";
+import { PatternFormat } from "react-number-format";
 import z from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -25,8 +25,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-
-type FormSchema = z.infer<typeof formSchema>;
+import { isValidCpf } from "../helpers/cpf";
 
 const formSchema = z.object({
   name: z.string().trim().min(1, { message: "Nome é obrigatório" }),
@@ -34,13 +33,21 @@ const formSchema = z.object({
     .string()
     .trim()
     .min(1, { message: "CPF é obrigatório" })
-    .refine((value) => value, { message: "CPF inválido" }),
+    .refine((value) => isValidCpf(value), { message: "CPF inválido" }),
 });
 
-const FinishOrderButton = () => {
+type FormSchema = z.infer<typeof formSchema>;
+
+interface FinishOrderDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+const FinishOrderDialog = ({ open, onOpenChange }: FinishOrderDialogProps) => {
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: { name: "", cpf: "" },
+    shouldUnregister: true,
   });
 
   const onSubmit = (data: FormSchema) => {
@@ -48,10 +55,8 @@ const FinishOrderButton = () => {
   };
 
   return (
-    <Drawer>
-      <DrawerTrigger asChild>
-        <Button className="w-full rounded-md">Finalizar pedido</Button>
-      </DrawerTrigger>
+    <Drawer open={open} onOpenChange={onOpenChange}>
+      <DrawerTrigger asChild></DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>Finalizar pedido</DrawerTitle>
@@ -83,7 +88,12 @@ const FinishOrderButton = () => {
                   <FormItem>
                     <FormLabel>CPF</FormLabel>
                     <FormControl>
-                      <PatternFormat placeholder="Digite seu CPF" format="###.###.###-##" customInput={Input} {...field} />
+                      <PatternFormat
+                        placeholder="Digite seu CPF"
+                        format="###.###.###-##"
+                        customInput={Input}
+                        {...field}
+                      />
                       {/* <Input  {...field} /> */}
                     </FormControl>
 
@@ -91,14 +101,21 @@ const FinishOrderButton = () => {
                   </FormItem>
                 )}
               />
-              <Button type="submit">Enviar</Button>
+              <DrawerFooter className="w-full">
+                <Button
+                  type="submit"
+                  variant="destructive"
+                  className="w-full rounded-md"
+                >
+                  Finalizar
+                </Button>
+                <DrawerClose asChild>
+                  <Button variant="outline" className="w-full rounded-md">
+                    Cancel
+                  </Button>
+                </DrawerClose>
+              </DrawerFooter>
             </form>
-            <DrawerFooter>
-              <Button type="submit">Submit</Button>
-              <DrawerClose>
-                <Button variant="outline">Cancel</Button>
-              </DrawerClose>
-            </DrawerFooter>
           </Form>
         </div>
       </DrawerContent>
@@ -106,4 +123,4 @@ const FinishOrderButton = () => {
   );
 };
 
-export default FinishOrderButton;
+export default FinishOrderDialog;
