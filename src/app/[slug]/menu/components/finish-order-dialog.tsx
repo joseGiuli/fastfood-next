@@ -1,8 +1,13 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ConsumptionMethod } from "@prisma/client";
+import { Loader2 } from "lucide-react";
+import { useParams, useSearchParams } from "next/navigation";
+import { useContext, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { PatternFormat } from "react-number-format";
+import { toast } from "sonner";
 import z from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -25,14 +30,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { isValidCpf } from "../helpers/cpf";
+
 import { createOrder } from "../actions/create-order";
-import { ConsumptionMethod } from "@prisma/client";
-import { useContext, useTransition } from "react";
-import { useParams, useSearchParams } from "next/navigation";
 import { CartContext } from "../contexts/cart";
-import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { isValidCpf } from "../helpers/cpf";
 
 const formSchema = z.object({
   name: z.string().trim().min(1, { message: "Nome é obrigatório" }),
