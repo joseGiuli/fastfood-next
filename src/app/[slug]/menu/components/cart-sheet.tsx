@@ -1,12 +1,12 @@
 import { useContext, useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import FormatCurrency from "@/helpers/format-currency";
 
 import { CartContext } from "../contexts/cart";
 import CartProductItem from "./cart-product-item";
-import { Button } from "@/components/ui/button";
 import FinishOrderDialog from "./finish-order-dialog";
 
 const CartSheet = () => {
@@ -15,9 +15,9 @@ const CartSheet = () => {
 
   return (
     <Sheet open={isOpen} onOpenChange={toggleCart}>
-      <SheetContent className="">
+      <SheetContent>
         <SheetTitle className="text-left">Carrinho</SheetTitle>
-        <div className="flex h-full flex-col py-5">
+        <div className="flex h-full flex-col space-y-4 py-5">
           <div className="flex-auto">
             {products.map((product) => (
               <CartProductItem product={product} key={product.id} />
